@@ -2,8 +2,16 @@
 using ArcGisMcpServer.Tools;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 
 await Host.CreateDefaultBuilder(args)
+    .ConfigureLogging(logging =>
+    {
+        // An stdio MCP server must keep stdout reserved for JSON-RPC traffic.
+        // Route every console log record to stderr so the protocol stream stays clean.
+        logging.ClearProviders();
+        logging.AddConsole(options => options.LogToStandardErrorThreshold = LogLevel.Trace);
+    })
     .ConfigureServices(services =>
     {
         services.AddSingleton(new BridgeClient("ArcGisProBridgePipe"));
