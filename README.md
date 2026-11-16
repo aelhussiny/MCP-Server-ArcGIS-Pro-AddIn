@@ -206,15 +206,15 @@ A ready-to-share package lives in [`dist/ArcGisMcp-Portable/`](dist/ArcGisMcp-Po
 Colleagues just unzip the folder and double-click **`Install.cmd`**, then restart the GitHub Copilot app. Because the bridge auto-starts with ArcGIS Pro, there is no button to click.
 
 ### Rebuilding the portable package
+Run the maintainer script (requires the .NET SDK and ArcGIS Pro 3.7+ installed):
 ```powershell
-# 1. Self-contained server exe (no .NET needed on target machines)
-dotnet publish McpServer\ArcGisMcpServer\ArcGisMcpServer.csproj -c Release -r win-x64 `
-  --self-contained true -p:PublishSingleFile=true -p:IncludeNativeLibrariesForSelfExtract=true `
-  -p:DebugType=none -o <staging>
-# 2. Build the Add-In to produce APBridgeAddIn.esriAddinX
-dotnet build AddIn\APBridgeAddIn\APBridgeAddIn.csproj -c Debug
-# 3. Copy ArcGisMcpServer.exe and APBridgeAddIn.esriAddinX into dist\ArcGisMcp-Portable\
+pwsh ./scripts/build-portable.ps1          # win-x64 (default)
+# pwsh ./scripts/build-portable.ps1 -Runtime win-arm64
 ```
+It publishes the self-contained server exe, builds the Add-In `.esriAddinX`, and zips them into
+`dist/ArcGisMcp-Portable/` (+ `dist/ArcGisMcp-Portable.zip`). Those build outputs are gitignored —
+upload them as GitHub Release assets.
+
 > The server is published **untrimmed** on purpose: MCP tool discovery uses reflection (`WithToolsFromAssembly`), which trimming can break.
 
 ---
