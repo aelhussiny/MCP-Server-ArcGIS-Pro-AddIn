@@ -1,0 +1,16 @@
+NOTICE
+======
+
+This project is a fork of "MCP Server with ArcGIS Pro Add-In" originally created
+by Studio A&T s.r.l. (GitHub: nicogis).
+
+    Original repository : https://github.com/nicogis/MCP-Server-ArcGIS-Pro-AddIn
+    Original license    : MIT License, Copyright (c) 2026 Studio A&T s.r.l.
+
+The original MIT License and copyright notice are retained in the LICENSE file and
+continue to apply to the original portions of the Software.
+
+Modifications and enhancements made in this fork are
+Copyright (c) 2026 Ahmed ElHussiny, and are released under the same MIT License.
+
+A summary of the changes introduced by this fork is maintained in CHANGELOG.md.
