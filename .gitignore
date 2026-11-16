@@ -361,3 +361,8 @@ MigrationBackup/
 
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
+
+# Portable distribution: built binaries are published as GitHub Release assets, not committed
+dist/**/*.exe
+dist/**/*.esriAddinX
+dist/**/*.zip
