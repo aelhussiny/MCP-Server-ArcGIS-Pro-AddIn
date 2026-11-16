@@ -143,6 +143,7 @@ Tool names exposed to the MCP client are the **snake_case** form of the C# metho
 | `zoom_to_layer` | `layer` | `pro.zoomToLayer` | Zoom the active view to a layer |
 | `zoom_to_features` | `layer`, `where` | `pro.zoomToFeatures` | Select features with a SQL `where` clause and zoom to their combined extent; returns the count |
 | `zoom_to_selection` | `layer` *(optional)* | `pro.zoomToSelection` | Zoom to the current selection of a layer, or the whole map's selection when omitted |
+| `get_selection_details` | `layer` *(optional)*, `limit` *(optional, default 50)* | `pro.getSelectionDetails` | Identify the current selection: for each selected feature, every field name and its value (per layer) |
 | `select_by_attribute` | `layer`, `where` | `pro.selectByAttribute` | Select features with a SQL `where` clause; returns the selected count |
 | `clear_selection` | `layer` *(optional)* | `pro.clearSelection` | Clear selection on a layer, or the whole map when omitted |
 | `get_selection_count` | `layer` | `pro.getSelectionCount` | Number of currently selected features in a layer |

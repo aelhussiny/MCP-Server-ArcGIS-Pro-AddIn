@@ -301,6 +301,89 @@ namespace APBridgeAddIn
 
                         return new(true, null, new { done = true });
                     }
+                case "pro.getSelectionDetails":
+                    {
+                        int limit = 50;
+                        if (req.Args != null &&
+                            req.Args.TryGetValue("limit", out string? limStr) &&
+                            int.TryParse(limStr, out int parsedLimit) && parsedLimit > 0)
+                            limit = parsedLimit;
+
+                        string? layerFilter = null;
+                        if (req.Args != null &&
+                            req.Args.TryGetValue("layer", out string? lf) &&
+                            !string.IsNullOrWhiteSpace(lf))
+                            layerFilter = lf;
+
+                        var details = await QueuedTask.Run(() =>
+                        {
+                            var map = MapView.Active?.Map;
+                            if (map == null) return null;
+
+                            var layersOut = new List<object>();
+                            var featureLayers = map.Layers.OfType<FeatureLayer>()
+                                .Where(l => layerFilter == null ||
+                                            l.Name.Equals(layerFilter, StringComparison.OrdinalIgnoreCase));
+
+                            foreach (var fl in featureLayers)
+                            {
+                                using var sel = fl.GetSelection();
+                                long count = sel.GetCount();
+                                if (count == 0) continue;
+
+                                var oids = sel.GetObjectIDs().Take(limit).ToList();
+                                using var fc = fl.GetFeatureClass();
+                                var def = fc.GetDefinition();
+                                string oidField = def.GetObjectIDField();
+                                var fields = def.GetFields()
+                                    .Where(f => f.FieldType != ArcGIS.Core.Data.FieldType.Geometry &&
+                                                f.FieldType != ArcGIS.Core.Data.FieldType.Blob &&
+                                                f.FieldType != ArcGIS.Core.Data.FieldType.Raster)
+                                    .ToList();
+
+                                var featuresOut = new List<object>();
+                                var qf = new ArcGIS.Core.Data.QueryFilter { ObjectIDs = oids };
+                                using (var cursor = fc.Search(qf, false))
+                                {
+                                    while (cursor.MoveNext())
+                                    {
+                                        using var row = cursor.Current;
+                                        var attrs = new Dictionary<string, object?>();
+                                        foreach (var f in fields)
+                                        {
+                                            var val = row[f.Name];
+                                            // Keep JSON-friendly types; stringify anything exotic.
+                                            if (val is null || val is string || val is bool ||
+                                                val is sbyte || val is byte || val is short || val is ushort ||
+                                                val is int || val is uint || val is long || val is ulong ||
+                                                val is float || val is double || val is decimal ||
+                                                val is DateTime || val is Guid)
+                                                attrs[f.Name] = val;
+                                            else
+                                                attrs[f.Name] = val.ToString();
+                                        }
+                                        long oid = Convert.ToInt64(row[oidField]);
+                                        featuresOut.Add(new { oid, attributes = attrs });
+                                    }
+                                }
+
+                                layersOut.Add(new
+                                {
+                                    layer = fl.Name,
+                                    count,
+                                    returned = featuresOut.Count,
+                                    features = featuresOut
+                                });
+                            }
+
+                            return (object)new { layers = layersOut };
+                        });
+
+                        if (details == null)
+                            return new(false, "no active map view", null);
+
+                        return new(true, null, details);
+                    }
                 default:
                     return new(false, $"op not found: {req.Op}", null);
             }

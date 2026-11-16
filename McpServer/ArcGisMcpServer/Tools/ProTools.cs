@@ -125,6 +125,16 @@ namespace ArcGisMcpServer.Tools
             return true;
         }
 
+        [McpServerTool, Description("Identify the current selection: for every selected feature, list each field and its value. Optionally restrict to one layer, and cap how many features per layer are returned (default 50).")]
+        public static async Task<SelectionDetails> GetSelectionDetails(string? layer = null, int limit = 50)
+        {
+            var args = new Dictionary<string, string> { ["limit"] = limit.ToString() };
+            if (!string.IsNullOrWhiteSpace(layer)) args["layer"] = layer;
+            var r = await _client!.OpAsync("pro.getSelectionDetails", args);
+            if (!r.Ok) throw new Exception(r.Error);
+            return System.Text.Json.JsonSerializer.Deserialize<SelectionDetails>(r.Data!.ToString()!)!;
+        }
+
         [McpServerTool, Description("Ping test to validate the MCP server (without depending on ArcGIS Pro)")]
         public static Task<string> Ping()
         {
@@ -150,5 +160,21 @@ namespace ArcGisMcpServer.Tools
     public record FieldInfo(
         [property: System.Text.Json.Serialization.JsonPropertyName("name")] string Name,
         [property: System.Text.Json.Serialization.JsonPropertyName("type")] string Type
+    );
+
+    public record SelectionDetails(
+        [property: System.Text.Json.Serialization.JsonPropertyName("layers")] List<LayerSelection> Layers
+    );
+
+    public record LayerSelection(
+        [property: System.Text.Json.Serialization.JsonPropertyName("layer")] string Layer,
+        [property: System.Text.Json.Serialization.JsonPropertyName("count")] long Count,
+        [property: System.Text.Json.Serialization.JsonPropertyName("returned")] int Returned,
+        [property: System.Text.Json.Serialization.JsonPropertyName("features")] List<SelectionFeature> Features
+    );
+
+    public record SelectionFeature(
+        [property: System.Text.Json.Serialization.JsonPropertyName("oid")] long Oid,
+        [property: System.Text.Json.Serialization.JsonPropertyName("attributes")] Dictionary<string, System.Text.Json.JsonElement> Attributes
     );
 }

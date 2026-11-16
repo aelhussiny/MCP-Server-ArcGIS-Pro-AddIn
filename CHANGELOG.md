@@ -6,7 +6,15 @@ the entries below describe enhancements made on top of that original work.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
-## [Unreleased] — fork enhancements
+## [1.2.0]
+
+### Added
+- **`get_selection_details`** — an "identify" tool. For the current selection it returns, per layer,
+  every selected feature's object ID and all of its field names and values (skipping geometry/blob/raster
+  fields). Optional `layer` filter and a `limit` (default 50) to cap features per layer. Ask things like
+  *"tell me the details of the selection."*
+
+## [1.1.0] — fork enhancements
 
 ### Added
 - **Seven new MCP tools** exposed on both the server and the Add-In:
