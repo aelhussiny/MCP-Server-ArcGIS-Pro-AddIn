@@ -1,8 +1,8 @@
 <#
-    build-portable.ps1 — regenerates the portable distribution in dist/ArcGisMcp-Portable:
-      * ArcGisMcpServer.exe  — self-contained, single-file MCP server (bundles the .NET runtime)
-      * APBridgeAddIn.esriAddinX — the ArcGIS Pro Add-In package
-      * ArcGisMcp-Portable.zip — the full one-click package
+    build-portable.ps1 - regenerates the portable distribution in dist/ArcGisMcp-Portable:
+      * ArcGisMcpServer.exe  - self-contained, single-file MCP server (bundles the .NET runtime)
+      * APBridgeAddIn.esriAddinX - the ArcGIS Pro Add-In package
+      * ArcGisMcp-Portable.zip - the full one-click package
 
     Requirements on the build machine:
       * .NET SDK (8 or newer)
@@ -46,4 +46,4 @@ Compress-Archive -Path (Join-Path $dist '*') -DestinationPath $zip -CompressionL
 Write-Host "Done." -ForegroundColor Green
 Write-Host "  Package folder : $dist"
 Write-Host "  Zip            : $zip"
-Write-Host "These are gitignored build outputs — upload them as GitHub Release assets."
+Write-Host "These are gitignored build outputs - upload them as GitHub Release assets."
