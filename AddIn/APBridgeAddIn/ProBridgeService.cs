@@ -63,8 +63,11 @@ namespace APBridgeAddIn
                     }
                     catch (Exception ex)
                     {
+                        var detail = ex.InnerException != null
+                            ? $"{ex.Message} -> {ex.InnerException.GetType().Name}: {ex.InnerException.Message}"
+                            : ex.Message;
                         await SendAsync(writer, new IpcResponse(false,
-                        ex.Message, null));
+                        $"{req.Op} failed: {ex.GetType().Name}: {detail}", null));
                     }
                 }
             }

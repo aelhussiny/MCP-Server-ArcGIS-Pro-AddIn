@@ -366,3 +366,5 @@ FodyWeavers.xsd
 dist/**/*.exe
 dist/**/*.esriAddinX
 dist/**/*.zip
+
+Demo.txt

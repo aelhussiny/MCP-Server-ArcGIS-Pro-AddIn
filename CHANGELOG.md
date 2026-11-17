@@ -6,6 +6,25 @@ the entries below describe enhancements made on top of that original work.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
+## [1.3.0]
+
+### Changed
+- **Detailed, actionable tool errors.** A failing tool used to surface only the generic
+  `An error occurred invoking '<tool>'` message. Every tool now goes through a shared helper that
+  raises `McpException`, so the real reason reaches the MCP client (Copilot):
+  - *ArcGIS Pro not reachable* - names the operation, explains that ArcGIS Pro must be running with a
+    map open and the bridge started, and includes the underlying error (e.g. `TimeoutException`).
+  - *Operation failed inside ArcGIS Pro* - includes the Add-In's error text.
+- The Add-In now reports failures as `<operation> failed: <ExceptionType>: <message>`, including the
+  inner exception when there is one.
+
+### Fixed
+- Release binaries no longer embed the build machine's local folder paths: `build-portable.ps1` now
+  builds the Add-In in Release **without debug symbols** (no `.pdb` in the package) and fails the build
+  if the repository path is found inside the packaged binaries.
+- The portable ZIP is built from an explicit list of distributable files, so local extras placed in
+  `dist/ArcGisMcp-Portable/` are never packaged. The script also stops if a `dotnet` step fails.
+
 ## [1.2.0]
 
 ### Added

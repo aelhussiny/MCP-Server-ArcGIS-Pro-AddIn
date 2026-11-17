@@ -212,9 +212,11 @@ Run the maintainer script (requires the .NET SDK and ArcGIS Pro 3.7+ installed):
 pwsh ./scripts/build-portable.ps1          # win-x64 (default)
 # pwsh ./scripts/build-portable.ps1 -Runtime win-arm64
 ```
-It publishes the self-contained server exe, builds the Add-In `.esriAddinX`, and zips them into
-`dist/ArcGisMcp-Portable/` (+ `dist/ArcGisMcp-Portable.zip`). Those build outputs are gitignored —
-upload them as GitHub Release assets.
+It publishes the self-contained server exe, builds the Add-In `.esriAddinX` (Release, no debug
+symbols), checks that neither binary embeds your local repository path, and zips the files listed
+in the table above into `dist/ArcGisMcp-Portable/` (+ `dist/ArcGisMcp-Portable.zip`). Any other files
+you keep in that folder are not packaged. Those build outputs are gitignored — upload them as GitHub
+Release assets.
 
 > The server is published **untrimmed** on purpose: MCP tool discovery uses reflection (`WithToolsFromAssembly`), which trimming can break.
 
